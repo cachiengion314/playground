@@ -6,16 +6,16 @@ import Playground from './playground-page'
 import NoMatch from './page-404'
 
 export const initState = {
-    playGround: {
-        chessboard: new Array(8).fill(0).map(() => new Array(8).fill(0))
+    playground: {
+        chessboard: new Array(4).fill(0).map(() => new Array(4).fill(0)),
     },
-    currentTheme: 0
+    currentTheme: 0,
+    selected: null,
 }
 
 const App = () => {
-
     return (
-        <PageWrapper value={initState}>
+        <PageWrapper value={{ ...initState }}>
             <Router>
                 <Routes>
                     <Route exact path="/" element={<Home />} />

@@ -1,3 +1,5 @@
+import ChessBlock from "./ChessBlock"
+
 export default class Vector {
     constructor(x = 0, y = 0) {
         this.x = x
@@ -39,11 +41,23 @@ export default class Vector {
     convertToId() {
         return `${this.x}_${this.y}`
     }
-    convertToPercentPosition() {
+    /**
+     * @param {ChessBlock[][]} chessboard 
+     */
+    convertToPercentPosition(chessboard) {
         let positionObject = {
             left: `${this.x * 12.5}%`,
             top: `${this.y * 12.5}%`,
-        };
+        }
+        if (!Array.isArray(chessboard)) {
+            return positionObject
+        }
+        const constant_x = (100 / chessboard.length) || 12.5
+        const constant_y = (100 / chessboard[0]?.length) || 12.5
+        positionObject = {
+            left: `${this.x * constant_x}%`,
+            top: `${this.y * constant_y}%`,
+        }
         return positionObject
     }
     convertToDirection() {

@@ -5,42 +5,85 @@ import Piece from "./Piece"
 import anime from "animejs/lib/anime.es.js"
 import Vector from './Vector'
 import ChessBlock from './ChessBlock'
+import { produce } from 'immer'
+
+const default_springAnime = {
+    direction: "normal",
+    easing: 'spring(1, 80, 10, 0)',
+    duration: 200,
+}
+
+/**
+ * @param {Piece} selectedPieceId 
+ * @param {Vector} currPos 
+ * @param {Vector} nextPos 
+ * @param {ChessBlock[][]} chessboard 
+ */
+export const moveBlock = (selectedId, currPos, nextPos, chessboard) => {
+    anime({
+        ...default_springAnime,
+        targets: `#${selectedId}`,
+        top: nextPos.convertToPercentPosition(chessboard).top,
+        left: nextPos.convertToPercentPosition(chessboard).left,
+    })
+}
+
+/**
+ * @param {string} selectedId 
+ * @param {string} currColor 
+ * @param {string} nextColor 
+ */
+export const changeBgColor = (selectedId, currColor, nextColor) => {
+    anime({
+        ...default_springAnime,
+        targets: `#${selectedId}`,
+        backgroundColor: nextColor,
+    })
+}
 
 /**
  * @param {Vector} pos 
  * @param {ChessBlock[][]} chessboard 
  */
 export const renderPieceAt = (pos, chessboard) => {
-    const [pageInfo] = usePageContext()
-    const { currentTheme } = pageInfo
+    const [pageInfo, setPageState] = usePageContext()
+    const { selected, currentTheme } = pageInfo
 
-    const movePiece = (selectedPieceId, currPos, nextPos) => {
+    const piece = new Piece(themes[currentTheme]["piece-color"], pos)
 
-        anime({
-            targets: `#${selectedPieceId}`,
-            top: nextPos.convertToPercentPosition().top,
-            left: nextPos.convertToPercentPosition().left,
-            direction: "normal",
-            easing: 'spring(1, 80, 10, 0)',
-            duration: 200,
+    React.useEffect(() => {
+        const nextState = produce(pageInfo, draftState => {
+            draftState.playground.chessboard[pos.x][pos.y] = piece
         })
-    }
-
-    const piece = new Piece(themes[currentTheme]["attack-block"], pos)
-    chessboard[pos.x][pos.y] = piece
-    logBoard(chessboard)
+        setPageState(nextState)
+    }, [])
 
     return (
         <div
             id={`${piece.id}`} key={`${piece.id}`}
-            style={{
-                top: pos.convertToPercentPosition().top,
-                left: pos.convertToPercentPosition().left,
-                backgroundColor: "green",
-            }}
             className="chess-piece"
+            style={{
+                left: pos.convertToPercentPosition(chessboard).left,
+                top: pos.convertToPercentPosition(chessboard).top,
+                width: `${100 / chessboard.length}%`,
+                height: `${100 / chessboard.length}%`,
+                backgroundColor: piece.color,
+            }}
             onClick={() => {
-                movePiece(piece.id, pos, new Vector(7, 7))
+                if (!selected) {
+                    changeBgColor(piece.id, piece.color, themes[currentTheme]["piece-color-highlight"])
+                    const nextState = produce(pageInfo, draftState => {
+                        draftState.selected = chessboard[piece.currentPos.x][piece.currentPos.y]
+                    })
+                    setPageState(nextState)
+                    return
+                }
+
+                changeBgColor(piece.id, themes[currentTheme]["piece-color-highlight"], piece.color)
+                const nextState = produce(pageInfo, draftState => {
+                    draftState.selected = null
+                })
+                setPageState(nextState)
             }}
         />
     )
@@ -51,14 +94,29 @@ export const renderPieceAt = (pos, chessboard) => {
  * @returns 
  */
 export const renderChessboard = (chessboard) => {
-    const [pageInfo] = usePageContext()
-    const { currentTheme } = pageInfo
+    const [pageInfo, setPageState] = usePageContext()
+    const { selected, currentTheme } = pageInfo
+
+    // const initChess = () => {
+    //     for (let i = 0; i < chessboard.length; ++i) {
+    //         for (let j = 0; j < chessboard[i].length; ++j) {
+
+    //         }
+    //     }
+    // }
+
+    // React.useEffect(() => {
+    //     const nextState = produce(pageInfo, draftState => {
+    //         draftState.playground.chessboard = _cloneChessBoard
+    //     })
+    //     setPageState(nextState)
+    // }, [])
+
 
     return chessboard.map((arr, x) => {
         return arr.map((elt, y) => {
             const pos = new Vector(x, y)
             const block = new ChessBlock(pos)
-            chessboard[x][y] = block
 
             let defaultColor = ""
             if (pos.isXYUniform()) {
@@ -70,12 +128,24 @@ export const renderChessboard = (chessboard) => {
             return (
                 <div
                     id={block.id} key={block.id}
-                    style={{
-                        top: pos.convertToPercentPosition().top,
-                        left: pos.convertToPercentPosition().left,
-                        backgroundColor: defaultColor,
-                    }}
                     className={`chess-block`}
+                    style={{
+                        left: pos.convertToPercentPosition(chessboard).left,
+                        top: pos.convertToPercentPosition(chessboard).top,
+                        backgroundColor: defaultColor,
+                        width: `${100 / chessboard.length}%`,
+                        height: `${100 / chessboard.length}%`
+                    }}
+                    onClick={() => {
+                        if (!selected) { return }
+                        moveBlock(selected.id, selected.currentPos, pos, chessboard)
+                        changeBgColor(selected.id, selected.color, selected.color)
+
+                        const nextState = produce(pageInfo, draftState => {
+                            draftState.selected = null
+                        })
+                        setPageState(nextState)
+                    }}
                     onMouseEnter={() => {
                         anime({
                             targets: `#${block.id}`,

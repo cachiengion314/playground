@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "this project create for fun",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve --config webpack.dev.js",
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "deploy": "scp -i /Users/hoangnam/Downloads/private-keys/caroran_2.cer -r ./build ubuntu@18.139.61.32:/home/ubuntu/frontend"
@@ -14,6 +13,7 @@
   "dependencies": {
     "animejs": "^3.2.1",
     "bootstrap": "^5.1.3",
+    "immer": "^9.0.15",
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.4.0",
