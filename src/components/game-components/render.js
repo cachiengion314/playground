@@ -1,61 +1,35 @@
 import React from 'react'
-import { logBoard, themes } from "../config"
+import { themes } from "../config"
 import { usePageContext } from "../page-wrapper/PageWrapper"
 import Piece from "./Piece"
-import anime from "animejs/lib/anime.es.js"
 import Vector from './Vector'
 import ChessBlock from './ChessBlock'
-import { produce } from 'immer'
-
-const default_springAnime = {
-    direction: "normal",
-    easing: 'spring(1, 80, 10, 0)',
-    duration: 200,
-}
-
-/**
- * @param {Piece} selectedPieceId 
- * @param {Vector} currPos 
- * @param {Vector} nextPos 
- * @param {ChessBlock[][]} chessboard 
- */
-export const moveBlock = (selectedId, currPos, nextPos, chessboard) => {
-    anime({
-        ...default_springAnime,
-        targets: `#${selectedId}`,
-        top: nextPos.convertToPercentPosition(chessboard).top,
-        left: nextPos.convertToPercentPosition(chessboard).left,
-    })
-}
-
-/**
- * @param {string} selectedId 
- * @param {string} currColor 
- * @param {string} nextColor 
- */
-export const changeBgColor = (selectedId, currColor, nextColor) => {
-    anime({
-        ...default_springAnime,
-        targets: `#${selectedId}`,
-        backgroundColor: nextColor,
-    })
-}
+import { anime_changeBgColor, anime_moveBlock, setSelected, updateBoard } from './utility'
+import { KEY_CHESSBOARD, KEY_CURRENT_THEME, KEY_SELECTED, STATE_CONFIG, STATE_PLAYGROUND } from '../App'
+import anime from "animejs/lib/anime.es.js"
+import produce from 'immer'
 
 /**
  * @param {Vector} pos 
  * @param {ChessBlock[][]} chessboard 
  */
-export const renderPieceAt = (pos, chessboard) => {
+export const renderPieceAt = (pos, chessboard, _stateName = STATE_PLAYGROUND) => {
     const [pageInfo, setPageState] = usePageContext()
-    const { selected, currentTheme } = pageInfo
+    const { [_stateName]: currState,
+        [STATE_CONFIG]: config,
+    } = pageInfo
+    const { [KEY_SELECTED]: selected } = currState
+    const { [KEY_CURRENT_THEME]: currTheme } = config
 
-    const piece = new Piece(themes[currentTheme]["piece-color"], pos)
+    const piece = new Piece(themes[currTheme]["piece-color"], pos)
 
     React.useEffect(() => {
-        const nextState = produce(pageInfo, draftState => {
-            draftState.playground.chessboard[pos.x][pos.y] = piece
-        })
-        setPageState(nextState)
+        updateBoard(pageInfo, setPageState, _stateName, KEY_CHESSBOARD, [
+            {
+                pos: pos,
+                piece: piece
+            },
+        ])
     }, [])
 
     return (
@@ -71,19 +45,15 @@ export const renderPieceAt = (pos, chessboard) => {
             }}
             onClick={() => {
                 if (!selected) {
-                    changeBgColor(piece.id, piece.color, themes[currentTheme]["piece-color-highlight"])
-                    const nextState = produce(pageInfo, draftState => {
-                        draftState.selected = chessboard[piece.currentPos.x][piece.currentPos.y]
-                    })
-                    setPageState(nextState)
+                    const change = anime_changeBgColor(piece, themes[currTheme]["piece-color-highlight"])
+                    anime({ ...change })
+                    setSelected(pageInfo, setPageState, _stateName, piece)
                     return
                 }
-
-                changeBgColor(piece.id, themes[currentTheme]["piece-color-highlight"], piece.color)
-                const nextState = produce(pageInfo, draftState => {
-                    draftState.selected = null
-                })
-                setPageState(nextState)
+                // console.log(`selected`, selected)
+                const change = anime_changeBgColor(piece, piece.color)
+                anime({ ...change })
+                setSelected(pageInfo, setPageState, _stateName, null)
             }}
         />
     )
@@ -91,27 +61,15 @@ export const renderPieceAt = (pos, chessboard) => {
 
 /**
  * @param {ChessBlock[][]} chessboard 
- * @returns 
  */
-export const renderChessboard = (chessboard) => {
+export const renderChessboard = (chessboard, _stateName = STATE_PLAYGROUND) => {
     const [pageInfo, setPageState] = usePageContext()
-    const { selected, currentTheme } = pageInfo
-
-    // const initChess = () => {
-    //     for (let i = 0; i < chessboard.length; ++i) {
-    //         for (let j = 0; j < chessboard[i].length; ++j) {
-
-    //         }
-    //     }
-    // }
-
-    // React.useEffect(() => {
-    //     const nextState = produce(pageInfo, draftState => {
-    //         draftState.playground.chessboard = _cloneChessBoard
-    //     })
-    //     setPageState(nextState)
-    // }, [])
-
+    const {
+        [_stateName]: currState,
+        [STATE_CONFIG]: config
+    } = pageInfo
+    const { [KEY_SELECTED]: selected } = currState
+    const { [KEY_CURRENT_THEME]: currentTheme } = config
 
     return chessboard.map((arr, x) => {
         return arr.map((elt, y) => {
@@ -138,13 +96,18 @@ export const renderChessboard = (chessboard) => {
                     }}
                     onClick={() => {
                         if (!selected) { return }
-                        moveBlock(selected.id, selected.currentPos, pos, chessboard)
-                        changeBgColor(selected.id, selected.color, selected.color)
 
-                        const nextState = produce(pageInfo, draftState => {
-                            draftState.selected = null
+                        const move = anime_moveBlock(selected, pos, chessboard)
+                        const change = anime_changeBgColor(selected, selected.color)
+                        anime({ ...move, ...change })
+
+                        const next = produce(pageInfo, (draft) => {
+                            let currPos = selected.currentPos
+                            draft[_stateName][KEY_CHESSBOARD][currPos.x][currPos.y] = null
+                            draft[_stateName][KEY_CHESSBOARD][pos.x][pos.y] = selected
+                            draft[_stateName][KEY_SELECTED] = null
                         })
-                        setPageState(nextState)
+                        setPageState(next)
                     }}
                     onMouseEnter={() => {
                         anime({

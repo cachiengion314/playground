@@ -1,4 +1,4 @@
-import { CHESS_BLOCK } from "../config"
+import { TYPE_CHESS_BLOCK } from "../config"
 
 export default class ChessBlock {
     type
@@ -7,7 +7,7 @@ export default class ChessBlock {
     weights
     constructor(currentPos) {
         this.currentPos = currentPos
-        this.type = CHESS_BLOCK
-        this.id = CHESS_BLOCK + "-" + currentPos.convertToId()
+        this.type = TYPE_CHESS_BLOCK
+        this.id = TYPE_CHESS_BLOCK + "-" + currentPos.convertToId()
     }
 }

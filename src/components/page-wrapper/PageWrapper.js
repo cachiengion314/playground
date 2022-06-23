@@ -13,8 +13,11 @@ const StateContext = React.createContext(null)
         </PageWrapper>
     )
  */
-const PageWrapper = ({ children, value, className }) => {
+const PageWrapper = ({ children, value, className, _needLog }) => {
     const [pageState, setPageState] = React.useState(value)
+    if (_needLog) {
+        console.log(`appState`, pageState)
+    }
     return (
         <div className={className}>
             <StateContext.Provider value={{ pageState, setPageState }} >

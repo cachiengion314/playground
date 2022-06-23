@@ -1,12 +1,12 @@
 import ChessBlock from "./ChessBlock"
-import { PIECE } from "../config"
+import { TYPE_PIECE } from "../config"
 
 export default class Piece extends ChessBlock {
     constructor(color, currentPos) {
         super(currentPos)
-        this.type = PIECE
+        this.type = TYPE_PIECE
         this.color = color
-        this.id = PIECE + "-" + currentPos.convertToId()
+        this.id = TYPE_PIECE + "-" + currentPos.convertToId()
     }
     getPossibleMovesScore() {
 

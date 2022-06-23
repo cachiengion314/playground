@@ -1,5 +1,5 @@
-export const PIECE = "piece"
-export const CHESS_BLOCK = "chess_block"
+export const TYPE_PIECE = "piece"
+export const TYPE_CHESS_BLOCK = "chess_block"
 
 export const themes = [{
     "chessboard-bg-color": "#9370d8",
@@ -37,23 +37,3 @@ export const themes = [{
     "piece-color": "#dd7676",
     "piece-color-highlight": "#ffdd94",
 }]
-
-export function logBoard(chessBoard) {
-    let str = ``
-    for (let y = 0; y < 8; ++y) {
-        for (let x = 0; x < 8; ++x) {
-            let block = ``
-            if (chessBoard[x][y].type == PIECE) {
-                block = `[ ${chessBoard[x][y].id}]`
-            } else {
-                block = `[          ]`
-            }
-            if (x == 7) {
-                str += ` ${block} \n`
-            } else {
-                str += ` ${block}`
-            }
-        }
-    }
-    console.log(str)
-}

@@ -5,17 +5,26 @@ import Home from './home-page/Home'
 import Playground from './playground-page'
 import NoMatch from './page-404'
 
-export const initState = {
-    playground: {
-        chessboard: new Array(4).fill(0).map(() => new Array(4).fill(0)),
+export const STATE_CONFIG = "config"
+export const KEY_SELECTED = "selected"
+export const KEY_CHESSBOARD = "chessboard"
+export const STATE_PLAYGROUND = "playground"
+export const KEY_CURRENT_THEME = "currentTheme"
+
+export const initAppState = {
+    [STATE_PLAYGROUND]: {
+        [KEY_CHESSBOARD]: new Array(8).fill(0)
+            .map(() => new Array(8).fill(0)),
+        [KEY_SELECTED]: null
     },
-    currentTheme: 0,
-    selected: null,
+    [STATE_CONFIG]: {
+        [KEY_CURRENT_THEME]: 0,
+    }
 }
 
 const App = () => {
     return (
-        <PageWrapper value={{ ...initState }}>
+        <PageWrapper value={{ ...initAppState }} _needLog={false}>
             <Router>
                 <Routes>
                     <Route exact path="/" element={<Home />} />

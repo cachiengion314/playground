@@ -5,14 +5,14 @@ import { Button, Header } from 'semantic-ui-react'
 import Vector from '../game-components/Vector'
 import { usePageContext } from '../page-wrapper/PageWrapper'
 import { renderChessboard, renderPieceAt } from '../game-components/render'
-import produce from 'immer'
+import { KEY_CHESSBOARD, STATE_PLAYGROUND } from '../App'
 
 const Playground = () => {
     const [playing, setPlaying] = React.useState(false)
     const animation = React.useRef(null)
-    const [pageInfo] = usePageContext()
-    const { playground } = pageInfo
-    const { chessboard } = playground
+    const [app] = usePageContext()
+    const { [STATE_PLAYGROUND]: playground } = app
+    const { [KEY_CHESSBOARD]: chessboard } = playground
 
     const handlePlay = () => {
         console.log("Play!!!")
@@ -34,8 +34,8 @@ const Playground = () => {
                         height: `${75 * 1 / x_y}vmin`,
                     }}
                 >
-                    {renderChessboard(produce(chessboard, (d) => d))}
-                    {renderPieceAt(new Vector(1, 3), produce(chessboard, (d) => d))}
+                    {renderChessboard(chessboard, STATE_PLAYGROUND)}
+                    {renderPieceAt(new Vector(1, 3), chessboard, STATE_PLAYGROUND)}
                 </div>
 
                 <Button
