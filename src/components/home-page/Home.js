@@ -5,9 +5,9 @@ import Layout from '../layout/Layout'
 const Home = () => {
     return (
         <Layout>
-            <p className=''>
-                <Link to="/playground">Navigate to playground Page</Link>
-            </p>
+            <h3 className=''>
+                <Link to="/maze">Maze Solver Game</Link>
+            </h3>
         </Layout>
     )
 }

@@ -13,10 +13,14 @@ const StateContext = React.createContext(null)
         </PageWrapper>
     )
  */
-const PageWrapper = ({ children, value, className, _needLog }) => {
+const PageWrapper = ({ children, value, className, _printLog }) => {
     const [pageState, setPageState] = React.useState(value)
-    if (_needLog) {
-        console.log(`appState`, pageState)
+    if (_printLog) {
+        // const FgRed = "\x1b[31m"
+        // const FgYellow = "\x1b[33m"
+        // const FgBlack = "\x1b[30m"
+        const FgGreen = "\x1b[32m"
+        console.log(`${FgGreen}%s\x1b[0m`, `appState: `, pageState)
     }
     return (
         <div className={className}>

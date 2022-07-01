@@ -1,3 +1,4 @@
+import { randomFrom } from "../../config/utility"
 import ChessBlock from "./ChessBlock"
 
 export default class Vector {
@@ -5,35 +6,41 @@ export default class Vector {
         this.x = x
         this.y = y
     }
-    plusVector(vector2) {
+    /**
+     * 
+     * @param {Vector} vector2 
+     * @returns 
+     */
+    plus(vector2) {
         return new Vector(this.x + vector2.x, this.y + vector2.y)
     }
-    multipliByNumber(num) {
+    /**
+     * 
+     * @param {number} num 
+     * @returns 
+     */
+    multipliBy(num) {
         return new Vector(this.x * num, this.y * num)
     }
+    /**
+     * 
+     * @param {Vector} vector 
+     * @returns 
+     */
     isEqualTo(vector) {
         if (this.x == vector.x && this.y == vector.y) {
             return true
         }
         return false
     }
+    /**
+     * @param {Vector} pos 
+     */
+    distanceTo(pos) {
+        return Number(Math.sqrt(Math.pow((this.x - pos.x), 2) + Math.pow((this.y - pos.y), 2)).toFixed(2))
+    }
     isXYUniform() {
         if (this.x % 2 == 0 && this.y % 2 == 0 || this.x % 2 != 0 && this.y % 2 != 0) {
-            return true
-        }
-        return false
-    }
-    isBoardLastLine() {
-        if (this.y == 7 || this.y == 0) {
-            return true
-        }
-        return false
-    }
-    isPositionInLegalMoves() {
-        let isPosInLegalMovess = AssignedVar.legalMovesOfSelectedPiece.filter((vector) => {
-            return vector.isEqualTo(this)
-        });
-        if (isPosInLegalMovess.length > 0) {
             return true
         }
         return false
@@ -80,19 +87,20 @@ export default class Vector {
         }
         return new Vector(slot1, slot2)
     }
-    isPositionOnTheBoard() {
-        if (this.x < 0 || this.y < 0 ||
-            this.x > 7 || this.y > 7) {
+    isPositionOnTheBoard(chessBoard) {
+        if (this.x < 0 || this.y < 0
+            || this.x > chessBoard.length - 1
+            || this.y > chessBoard[this.x].length - 1) {
             return false
         }
         return true
     }
+    /**
+     * @returns {Vector}
+     */
     static createRandomDirection() {
-        function randomFromAToMax(a = 0, MAX = 2) {
-            return Math.floor(Math.random() * (MAX - a)) + a
-        }
-        let rX = randomFromAToMax(-1, 2)
-        let rY = randomFromAToMax(-1, 2)
+        let rX = randomFrom(-1, 2)
+        let rY = randomFrom(-1, 2)
         if (rX == 0 && rY == 0) {
             return Vector.createRandomDirection()
         }
@@ -102,7 +110,7 @@ export default class Vector {
         let numbers = id.split(`_`)
         numbers = numbers.map(item => {
             return Number(item);
-        });
+        })
         return new Vector(numbers[numbers.length - 2], numbers[numbers.length - 1])
     }
 }
