@@ -1,15 +1,19 @@
 import React from 'react'
 import { usePageContext } from "../page-wrapper/PageWrapper"
-import { KEY_BOARD_SIZE_X, KEY_BOARD_SIZE_Y, KEY_CURRENT_LEVEL, KEY_CURRENT_THEME, KEY_PIECES_BOARD, KEY_SELECTED, STATE_CONFIG, STATE_MAZE_SOLVER } from '../App'
+import {
+    KEY_BOARD_SIZE_X, KEY_BOARD_SIZE_Y, KEY_CURRENT_LEVEL, KEY_CURRENT_THEME,
+    KEY_PIECES_BOARD, KEY_SELECTED, STATE_CONFIG, STATE_MAZE_SOLVER
+} from '../App'
 import { anime_createObj, getBlockColorFrom, anime_executeTimeline } from '../config/utility'
 import ChessBlock from './classes/ChessBlock'
 import Vector from './classes/Vector'
 import { default_handleDestinationClick } from './Destinations'
 import produce from 'immer'
 import { calculateBlockSize } from './utility'
+import PathNode from './classes/PathNode'
+import { themes } from '../config'
 
 /**
- * 
  * @param {obj} param0 
  * @returns {JSX.Element}
  */
@@ -49,12 +53,39 @@ export const Chessboard = ({ stateName = STATE_MAZE_SOLVER }) => {
                     }}
 
                     onMouseEnter={() => {
-                        let obj = { scale: .95, translateY: ".25rem", opacity: "1", }
-                        anime_executeTimeline([anime_createObj(block.id, obj)])
+                        if (!selected) {
+                            let obj = { scale: .95, translateY: ".25rem", opacity: "1", }
+                            anime_executeTimeline([anime_createObj(block.id, obj)])
+                            return
+                        }
+
+                        // const positions = PathNode.findRouteTo(pos, selected.currentPos, selected, piecesBoard)
+                        // const objs = positions
+                        //     .filter((elt, index) => index !== 0)
+                        //     .map((move) => {
+                        //         return anime_createObj(ChessBlock.getBlockIdOf(move), {
+                        //             backgroundColor: themes[currTheme]["block-highlight-color"],
+                        //             opacity: 1,
+                        //         })
+                        //     })
+                        // selected.moves = positions
+                        // anime_executeTimeline(objs)
                     }}
                     onMouseLeave={() => {
-                        let obj = { scale: 1, translateY: "0", opacity: block.defaultOpacity, }
-                        anime_executeTimeline([anime_createObj(block.id, obj)])
+                        if (!selected) {
+                            let obj = { scale: 1, translateY: "0", opacity: block.defaultOpacity, }
+                            anime_executeTimeline([anime_createObj(block.id, obj)])
+                            return
+                        }
+
+                        // const moves = selected.moves
+                        // const objs = moves.map((move) => {
+                        //     return anime_createObj(ChessBlock.getBlockIdOf(move), {
+                        //         backgroundColor: getBlockColorFrom(move, 0),
+                        //         opacity: ChessBlock.getDefaultOpacity(),
+                        //     })
+                        // })
+                        // anime_executeTimeline(objs)
                     }}
                     onClick={() => {
                         default_handleDestinationClick(

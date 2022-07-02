@@ -110,11 +110,14 @@ export const Destinations = ({ stateName = STATE_MAZE_SOLVER }) => {
                         () => {
                             let nextX = boardSizeX
                             let nextY = boardSizeY
-                            if (boardSizeX < 21) {
-                                nextX = boardSizeX + randomBetween([0, 2])
-                            }
                             if (boardSizeY < 21) {
                                 nextY = boardSizeY + randomBetween([0, 2])
+                            }
+                            if (boardSizeX < 21) {
+                                nextX = boardSizeX + randomBetween([0, 2])
+                                if (nextX >= nextY + 6) {
+                                    nextY = nextX - 2
+                                }
                             }
                             maze_setBoard(nextX, nextY, app, setPageState, currTheme, selected)
                         },

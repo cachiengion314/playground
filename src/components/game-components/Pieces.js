@@ -68,7 +68,7 @@ export const Pieces = ({ stateName = STATE_MAZE_SOLVER }) => {
 
                         anime_visualizeSelectPiece(foundSelected, piecesBoard, currTheme,
                             themes[currTheme]["piece-highlight-color"],
-                            themes[currTheme]["main-piece-color"]
+                            themes[currTheme]["block-highlight-color"]
                         )
 
                         foundSelected.setColor(themes[currTheme]["piece-highlight-color"])

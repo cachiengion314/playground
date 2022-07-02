@@ -10,7 +10,7 @@ export const themes = [{
     "attack-block-color": `#ff6347`,
     "dark-block-color": `#00fa9a`,
     "light-block-color": `#ffd700`,
-    "main-piece-color": `#00ffff`,
+    "block-highlight-color": `#00ffff`,
     "obstacles-color": "#0000ff",
     "piece-highlight-color": "#bbffa9",
     "piece-hover-color": "#f1c692",
@@ -19,7 +19,7 @@ export const themes = [{
     "chessboard-bg-color": "rosybrown",
 
     "destinattion-color": "hotpink",
-    "main-piece-color": "khaki",
+    "block-highlight-color": "khaki",
     "attack-block-color": "lime",
     "dark-block-color": "lightsalmon",
     "light-block-color": "orangered",
@@ -31,7 +31,7 @@ export const themes = [{
     "chessboard-bg-color": "darkblue",
 
     "destinattion-color": "lightyellow",
-    "main-piece-color": "lightskyblue",
+    "block-highlight-color": "lightskyblue",
     "attack-block-color": "lightsalmon",
     "dark-block-color": "lightyellow",
     "light-block-color": "wheat",

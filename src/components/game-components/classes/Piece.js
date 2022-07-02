@@ -78,7 +78,7 @@ export default class Piece extends ChessBlock {
      */
     static generateFrom(board, _currTheme = 0, _callback = (piecePos = new Vector(0, 0)) => { }) {
         const defaultPos = new Vector(0, 0)
-        const mainPiece = new Piece(defaultPos, themes[_currTheme]["main-piece-color"])
+        const mainPiece = new Piece(defaultPos, themes[_currTheme]["block-highlight-color"])
         board[defaultPos.x][defaultPos.y] = mainPiece
 
         _callback && _callback(defaultPos)

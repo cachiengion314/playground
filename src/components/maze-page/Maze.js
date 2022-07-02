@@ -22,7 +22,7 @@ const Maze = () => {
     return (
         <Layout>
             <Header as="h2">Maze Solver - level:<span>&nbsp;</span>{currLevel + 1}</Header>
-            <h4 className='mb-4'>board size x: {boardSizeX} y: {boardSizeY} </h4>
+            <h4 className='mb-4'>board size x: {boardSizeX}<span>&nbsp;</span> y: {boardSizeY} </h4>
 
             <div className={"play-content"}>
                 <div
